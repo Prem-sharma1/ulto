@@ -11,8 +11,8 @@ const Home = () => {
 
       {/* Navbar */}
       <nav className="glass sticky top-0 z-50 flex justify-between items-center px-8 py-4">
-        <div className="text-2xl font-black tracking-tighter">
-          RIDE<span className="text-primary-500">X</span>
+        <div className="text-2xl font-black tracking-tighter uppercase">
+          ULT<span className="text-primary-500">O</span>
         </div>
         <div className="flex gap-4">
           <Link to="/login" className="px-5 py-2 text-sm font-semibold text-white/80 hover:text-white transition-colors">
@@ -35,7 +35,7 @@ const Home = () => {
           <h1 className="text-6xl md:text-8xl font-black leading-tight mb-6">
             Go anywhere with <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-accent-500">
-              RideX
+              ulto
             </span>
           </h1>
           <p className="text-xl text-gray-400 mb-10 max-w-lg">

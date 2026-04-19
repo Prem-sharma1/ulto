@@ -1,4 +1,4 @@
-# RideX - Premium Uber Clone
+# ulto - Premium Uber Clone
 
 A full-stack, real-time ride-sharing application built with React, Node.js, Socket.io, and MongoDB. 
 

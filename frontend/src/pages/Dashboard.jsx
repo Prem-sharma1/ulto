@@ -356,7 +356,7 @@ const Dashboard = () => {
       <aside className="w-full md:w-80 glass flex flex-col md:h-screen sticky top-0 z-20 shadow-2xl">
         <div className="p-6 border-b border-white/5 flex justify-between items-center">
           <div className="text-xl font-black tracking-tighter">
-            RIDE<span className={role === 'rider' ? 'text-primary-500' : 'text-accent-500'}>X</span>
+            ULT<span className={role === 'rider' ? 'text-primary-500' : 'text-accent-500'}>O</span>
           </div>
           <button onClick={onLogout} className="text-gray-400 hover:text-white transition-colors">
             <LogOut size={20}/>
