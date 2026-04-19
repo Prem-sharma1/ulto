@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, LogOut, Navigation, CheckCircle, Car, Clock, Route } from 'lucide-react';
+import { MapPin, LogOut, Navigation, CheckCircle, Car, Clock, Route, ChevronUp, ChevronDown } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { logout, reset } from '../store/authSlice';
 import { requestRide, setActiveRide } from '../store/rideSlice';
 import { useSocket } from '../context/SocketContext';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 
 // Fix basic leaflet icons
@@ -52,7 +53,8 @@ const RecenterMap = ({ markers }) => {
   useEffect(() => {
     if (markers.length > 1) {
       const bounds = L.latLngBounds(markers.map(m => m.position));
-      map.fitBounds(bounds, { padding: [60, 60] });
+      const isMobile = window.innerWidth < 768;
+      map.fitBounds(bounds, { padding: isMobile ? [40, 40] : [80, 80] });
     } else if (markers.length === 1) {
       map.setView(markers[0].position, 15);
     }
@@ -82,6 +84,7 @@ const Dashboard = () => {
   const [distanceKm, setDistanceKm] = useState(null);
   const [etaMin, setEtaMin] = useState(null);
   const watchIdRef = useRef(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(true);
 
   useEffect(() => {
     if (!user) {
@@ -352,9 +355,25 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-dark-900 flex flex-col md:flex-row">
-      <aside className="w-full md:w-80 glass flex flex-col md:h-screen sticky top-0 z-20 shadow-2xl">
-        <div className="p-6 border-b border-white/5 flex justify-between items-center">
+    <div className="min-h-screen bg-dark-900 flex flex-col md:flex-row relative overflow-hidden">
+      {/* Sidebar / Mobile Bottom Sheet */}
+      <motion.aside 
+        initial={false}
+        animate={{ 
+          y: typeof window !== 'undefined' && window.innerWidth < 768 ? (isSheetOpen ? 0 : 'calc(100% - 80px)') : 0 
+        }}
+        className="w-full md:w-80 glass flex flex-col h-[70vh] md:h-screen fixed md:sticky bottom-0 md:top-0 z-20 shadow-2xl rounded-t-3xl md:rounded-none transition-all duration-300"
+      >
+        {/* Mobile Handle */}
+        <div 
+          className="md:hidden flex flex-col items-center py-3 cursor-pointer border-b border-white/5"
+          onClick={() => setIsSheetOpen(!isSheetOpen)}
+        >
+          <div className="w-12 h-1.5 bg-white/20 rounded-full mb-1"></div>
+          {isSheetOpen ? <ChevronDown size={16} className="text-gray-500" /> : <ChevronUp size={16} className="text-gray-500" />}
+        </div>
+
+        <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center">
           <div className="text-xl font-black tracking-tighter">
             ULT<span className={role === 'rider' ? 'text-primary-500' : 'text-accent-500'}>O</span>
           </div>
@@ -363,14 +382,14 @@ const Dashboard = () => {
           </button>
         </div>
         
-        <div className="p-6 flex-1 overflow-y-auto">
-          <div className="mb-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-gray-700/50 rounded-full flex items-center justify-center text-xl font-bold border border-white/10">
+        <div className="p-4 md:p-6 flex-1 overflow-y-auto">
+          <div className="mb-4 md:mb-6 flex items-center gap-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-700/50 rounded-full flex items-center justify-center text-lg md:text-xl font-bold border border-white/10">
                {user?.name?.charAt(0) || 'U'}
             </div>
             <div>
-              <h3 className="font-bold tracking-wide">{user?.name || 'Guest User'}</h3>
-              <p className="text-sm text-gray-400">{role === 'rider' ? 'Rider Account' : 'Driver Account'}</p>
+              <h3 className="font-bold tracking-wide text-sm md:text-base">{user?.name || 'Guest User'}</h3>
+              <p className="text-xs text-gray-400">{role === 'rider' ? 'Rider Account' : 'Driver Account'}</p>
             </div>
           </div>
 
@@ -464,18 +483,21 @@ const Dashboard = () => {
             </div>
           )}
         </div>
-      </aside>
+      </motion.aside>
 
-      <main className="flex-1 relative h-[50vh] md:h-screen w-full bg-dark-800 z-10">
+      {/* Map Main View */}
+      <main className="flex-1 relative h-screen w-full bg-dark-800 z-10">
         <MapContainer 
            center={markers.length > 0 ? markers[0].position : defaultCenter} 
            zoom={13} 
            style={{ height: '100%', width: '100%', zIndex: 10 }}
+           zoomControl={false} // Disable default zoom to reposition it
         >
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://carto.com/">CARTO</a>'
           />
+          <ZoomControl position="topright" />
           {markers.map((marker, idx) => (
             <Marker key={idx} position={marker.position} icon={marker.icon || new L.Icon.Default()}>
               <Popup className="text-dark-900 font-bold">{marker.popup}</Popup>

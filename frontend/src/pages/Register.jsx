@@ -50,9 +50,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-900 flex items-center justify-center p-6 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent-900/20 via-dark-900 to-dark-900">
-      <div className="glass w-full max-w-md p-8 rounded-2xl animate-fade-in relative z-10">
-        <h2 className="text-3xl font-bold mb-6 text-center">Join ulto</h2>
+    <div className="min-h-screen bg-dark-900 flex items-center justify-center p-4 md:p-6 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent-900/20 via-dark-900 to-dark-900">
+      <div className="glass w-full max-w-sm md:max-w-md p-6 md:p-8 rounded-2xl animate-fade-in relative z-10">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">Join ulto</h2>
         
         {/* Role Selector */}
         <div className="flex bg-dark-800 p-1 rounded-lg mb-6 border border-white/5">
